@@ -82,6 +82,18 @@ cv::Mat DSST::CreatScaleHann(int n){
 	return tmp1;
 }
 
-
-
+/**************************
+Function: resize the old size image to new size
+@ src    : source image
+@ dst    : dst image
+@ old_sz : the old size of iamge
+@ new_sz : the new size of image
+@return : void
+***************************/
+void DSST::DsstResize(cv::Mat &src, cv::Mat &dst, cv::Size old_sz, cv::Size new_sz){
+	int interpolation;
+	if (new_sz.width > old_sz.height) interpolation = CV_INTER_LINEAR;
+	else interpolation = CV_INTER_AREA;
+	cv::resize(src, dst, new_sz, 0, 0, interpolation);
+}
 

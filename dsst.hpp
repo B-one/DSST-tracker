@@ -21,18 +21,19 @@ public:
 
 private:
 //---------function member-----------------
+	void DsstResize(cv::Mat &src, cv::Mat &dst, cv::Size old_sz, cv::Size new_sz);
+
 	cv::Mat TranGaussianLabels(float sigma, cv::Size sz);//create 2D gaussian shape labels for translation labels
 	cv::Mat CreatTransHann(cv::Size sz);//create 2D hann window
 	vector<cv::Mat> GetTransSample(cv::Mat &im);
-	vector<cv::Mat> GetTransFeatures(cv::Mat im_patch, int cell_size = 1);//get a fhog feature of im_patch
+	vector<cv::Mat> GetTransFeatures(cv::Mat im_patch);//get a fhog feature of im_patch
 	void TransPredict(cv::Mat &im);
 	void TransLearn(cv::Mat &im);
-
 
 	cv::Mat ScaleGaussianLabels(float sigma, int n);//create 1D gaussian labels for scale filter
 	cv::Mat CreatScaleHann(int n);//create 1D hann window
 	cv::Mat GetScaleSample(cv::Mat &im);
-	cv::Mat GetScaleFeatures(cv::Mat im_patch, float factor_window, int cell_size = 1 );
+	cv::Mat GetScaleFeatures(cv::Mat im_patch, float factor_window, int cell_size);
 	void ScalePredict(cv::Mat &im);
 	void ScaleLearn(cv::Mat &im);
 
@@ -49,7 +50,7 @@ private:
 	cv::Size current_target_sz;//current target size
 	float lambda = 0.01f;//t
 	float learning_rate = 0.025f;
-
+	int cell_size = 4;
 
   //---------Translate Correlation filter------------
 	float padding =0.5f;

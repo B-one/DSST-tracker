@@ -13,12 +13,14 @@ void DSST::Init(cv::Mat image, cv::Rect rect){
 	pos_ = cv::Point(rect.x + cvFloor((float(rect.width) / 2.)),
 									rect.y + cvFloor((float(rect.height)) / 2.));
 	current_target_sz = init_target_sz = rect.size();
-	padding = 0.5f;
+	padding = 1.0f; //这里为什么？？？
 	window_sz = FloorSizeScale(init_target_sz, 1 + padding);
+	window_sz.width = window_sz.width / 4 * 4;
+	window_sz.height = window_sz.height / 4 * 4;
 
   //----------Create a 2D Gaussian(fft) labels of translation--------------
-	float output_sigma = sqrt(init_target_sz.area())*output_sigma_factor;
-	cv::dft(TranGaussianLabels(output_sigma, window_sz), trans_yf_,CV_HAL_DFT_COMPLEX_OUTPUT);
+	float output_sigma = sqrt(init_target_sz.area())*output_sigma_factor/cell_size;
+	cv::dft(TranGaussianLabels(output_sigma, FloorSizeScale(window_sz, 1. / cell_size)), trans_yf_, CV_HAL_DFT_COMPLEX_OUTPUT);
 	trans_hann_window = CreatTransHann(trans_yf_.size());//create a 2D hann windows
 
   //----------Create a 1D Gaussian(fft) labels of Scale--------------

@@ -71,11 +71,7 @@ vector<cv::Mat> DSST::GetTransSample(cv::Mat &im){
 	}
 
   //resize sample size to window_sz
-	int interpolation;
-	if (window_sz.width > sample_sz.height) interpolation = CV_INTER_LINEAR;
-	else interpolation = CV_INTER_AREA;
-	cv::resize(sample, sample, window_sz, 0, 0, interpolation);
-
+	DsstResize(sample, sample, sample_sz, window_sz);
 
 	vector<cv::Mat> out = GetTransFeatures(sample); //0.018s
 	return out;
@@ -87,7 +83,7 @@ Function: get fhog feature of translation sample
 @ cell_size: a parameter of fhog
 @return: a fhog map
 ***************************/
-std::vector<cv::Mat> DSST::GetTransFeatures(cv::Mat im_patch, int cell_size){
+std::vector<cv::Mat> DSST::GetTransFeatures(cv::Mat im_patch){
 	cv::Mat x;
 	vector<cv::Mat> x_vector(28);
 	vector<cv::Mat> tmp_vector;
@@ -95,13 +91,14 @@ std::vector<cv::Mat> DSST::GetTransFeatures(cv::Mat im_patch, int cell_size){
 	if (im_patch.channels() == 3) cv::cvtColor(im_patch, im_patch, CV_BGR2GRAY);
 	im_patch.convertTo(im_patch, CV_32FC1);
 
-	x_vector[0] = im_patch / 255.0 - 0.5;
 	tmp_vector = trans_fhog.extract(im_patch, 2, cell_size);//31 channels = 27 gradiens orientation + 4 textures
-
-
 	for (int i = 0; i < 27; i++){
 		x_vector[i + 1] = tmp_vector[i];
 	}
+
+	if (cell_size>1) DsstResize(im_patch, im_patch, im_patch.size(), trans_yf_.size());
+	x_vector[0] = im_patch / 255.0 - 0.5;
+	
 	for (int i = 0; i < 28; i++){
 		x_vector[i] = x_vector[i].mul(trans_hann_window);
 	}

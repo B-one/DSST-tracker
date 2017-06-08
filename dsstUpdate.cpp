@@ -57,8 +57,9 @@ void DSST::TransPredict(cv::Mat &im){
 	cv::Point maxLoc;
 	cv::minMaxLoc(response, NULL, NULL, NULL, &maxLoc);//get max response location
 
-	pos_.x = pos_.x + round((-float(window_sz.width) / 2.0 + maxLoc.x)*currentScaleFactor)+1;//得到新坐标，后一项代表偏移量
-	pos_.y = pos_.y + round((-float(window_sz.height) / 2.0 + maxLoc.y)*currentScaleFactor)+1;
+	pos_.x = pos_.x + round((-float(window_sz.width) / 2.0 + (maxLoc.x+1)*cell_size)*currentScaleFactor)+1;//得到新坐标，后一项代表偏移量
+	pos_.y = pos_.y + round((-float(window_sz.height) / 2.0 + (maxLoc.y+1)*cell_size)*currentScaleFactor) + 1;
+	cout << pos_.x << " " << pos_.y << endl;
 }
 
 /**************************
